@@ -1,0 +1,157 @@
+[[package]]
+category = "main"
+description = "Python command-line parsing library"
+name = "argparse"
+optional = false
+python-versions = "*"
+version = "1.4.0"
+
+[[package]]
+category = "main"
+description = "Easy to use Python subprocess interface."
+name = "easyprocess"
+optional = false
+python-versions = "*"
+version = "0.3"
+
+[[package]]
+category = "main"
+description = "easy to use command-line interface for python modules"
+name = "entrypoint2"
+optional = false
+python-versions = "*"
+version = "0.2.1"
+
+[package.dependencies]
+argparse = "*"
+
+[[package]]
+category = "main"
+description = "Low-level, pure Python DBus protocol wrapper."
+marker = "python_version > \"3.4\" and platform_system == \"Linux\""
+name = "jeepney"
+optional = false
+python-versions = ">=3.5"
+version = "0.4.3"
+
+[package.extras]
+dev = ["testpath"]
+
+[[package]]
+category = "main"
+description = "An ultra fast cross-platform multiple screenshots module in pure python using ctypes."
+marker = "python_version > \"3.4\""
+name = "mss"
+optional = false
+python-versions = ">=3.5"
+version = "5.1.0"
+
+[[package]]
+category = "main"
+description = "Python Imaging Library (Fork)"
+name = "pillow"
+optional = false
+python-versions = ">=3.5"
+version = "7.1.2"
+
+[[package]]
+category = "main"
+description = "python screenshot"
+name = "pyscreenshot"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "2.2"
+
+[package.dependencies]
+EasyProcess = "*"
+entrypoint2 = "*"
+
+[package.dependencies.jeepney]
+python = ">=3.5"
+version = "*"
+
+[package.dependencies.mss]
+python = ">=3.5"
+version = "*"
+
+[[package]]
+category = "main"
+description = "Python X Library"
+name = "python-xlib"
+optional = false
+python-versions = "*"
+version = "0.27"
+
+[package.dependencies]
+six = ">=1.10.0"
+
+[[package]]
+category = "main"
+description = "Python 2 and 3 compatibility utilities"
+name = "six"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "1.15.0"
+
+[metadata]
+content-hash = "ec37954e03f1d40e7062ec7e25a7fc811d8f4e42d926ffdbc1632c1d56ca276a"
+python-versions = "^3.7"
+
+[metadata.files]
+argparse = [
+    {file = "argparse-1.4.0-py2.py3-none-any.whl", hash = "sha256:c31647edb69fd3d465a847ea3157d37bed1f95f19760b11a47aa91c04b666314"},
+    {file = "argparse-1.4.0.tar.gz", hash = "sha256:62b089a55be1d8949cd2bc7e0df0bddb9e028faefc8c32038cc84862aefdd6e4"},
+]
+easyprocess = [
+    {file = "EasyProcess-0.3-py2.py3-none-any.whl", hash = "sha256:fca26794d3ced044d0471bd4ed767d5c287391d8a1c5e9d106fc59478b732543"},
+    {file = "EasyProcess-0.3.tar.gz", hash = "sha256:fb948daac01f64c1e49750752711253614846c6fc7e5692a718a7408f2ffb984"},
+]
+entrypoint2 = [
+    {file = "entrypoint2-0.2.1-py2.py3-none-any.whl", hash = "sha256:acbc0bf0b4e3236110f957d4ae267a568da1afb98704664cbe4c555d71f7376f"},
+    {file = "entrypoint2-0.2.1.tar.gz", hash = "sha256:5b6131c779dba9f4fda645dcc15a820f4fc8d493e163df24ae5911840850be95"},
+]
+jeepney = [
+    {file = "jeepney-0.4.3-py3-none-any.whl", hash = "sha256:d6c6b49683446d2407d2fe3acb7a368a77ff063f9182fe427da15d622adc24cf"},
+    {file = "jeepney-0.4.3.tar.gz", hash = "sha256:3479b861cc2b6407de5188695fa1a8d57e5072d7059322469b62628869b8e36e"},
+]
+mss = [
+    {file = "mss-5.1.0-py3-none-any.whl", hash = "sha256:3573ae98d8c2a8c2e1acfb155a951cdde002bda7ed0c9c2f3acff09e5aad665e"},
+    {file = "mss-5.1.0.tar.gz", hash = "sha256:cc5d52540bca12dc8d355e8379597736ffcb2df7dc293ba095557fa4856e9423"},
+]
+pillow = [
+    {file = "Pillow-7.1.2-cp35-cp35m-macosx_10_10_intel.whl", hash = "sha256:ae2b270f9a0b8822b98655cb3a59cdb1bd54a34807c6c56b76dd2e786c3b7db3"},
+    {file = "Pillow-7.1.2-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:d23e2aa9b969cf9c26edfb4b56307792b8b374202810bd949effd1c6e11ebd6d"},
+    {file = "Pillow-7.1.2-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:b532bcc2f008e96fd9241177ec580829dee817b090532f43e54074ecffdcd97f"},
+    {file = "Pillow-7.1.2-cp35-cp35m-win32.whl", hash = "sha256:12e4bad6bddd8546a2f9771485c7e3d2b546b458ae8ff79621214119ac244523"},
+    {file = "Pillow-7.1.2-cp35-cp35m-win_amd64.whl", hash = "sha256:9744350687459234867cbebfe9df8f35ef9e1538f3e729adbd8fde0761adb705"},
+    {file = "Pillow-7.1.2-cp36-cp36m-macosx_10_10_x86_64.whl", hash = "sha256:f54be399340aa602066adb63a86a6a5d4f395adfdd9da2b9a0162ea808c7b276"},
+    {file = "Pillow-7.1.2-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:1f694e28c169655c50bb89a3fa07f3b854d71eb47f50783621de813979ba87f3"},
+    {file = "Pillow-7.1.2-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:f784aad988f12c80aacfa5b381ec21fd3f38f851720f652b9f33facc5101cf4d"},
+    {file = "Pillow-7.1.2-cp36-cp36m-win32.whl", hash = "sha256:b37bb3bd35edf53125b0ff257822afa6962649995cbdfde2791ddb62b239f891"},
+    {file = "Pillow-7.1.2-cp36-cp36m-win_amd64.whl", hash = "sha256:b67a6c47ed963c709ed24566daa3f95a18f07d3831334da570c71da53d97d088"},
+    {file = "Pillow-7.1.2-cp37-cp37m-macosx_10_10_x86_64.whl", hash = "sha256:eaa83729eab9c60884f362ada982d3a06beaa6cc8b084cf9f76cae7739481dfa"},
+    {file = "Pillow-7.1.2-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:f46e0e024346e1474083c729d50de909974237c72daca05393ee32389dabe457"},
+    {file = "Pillow-7.1.2-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:0e2a3bceb0fd4e0cb17192ae506d5f082b309ffe5fc370a5667959c9b2f85fa3"},
+    {file = "Pillow-7.1.2-cp37-cp37m-win32.whl", hash = "sha256:ccc9ad2460eb5bee5642eaf75a0438d7f8887d484490d5117b98edd7f33118b7"},
+    {file = "Pillow-7.1.2-cp37-cp37m-win_amd64.whl", hash = "sha256:b943e71c2065ade6fef223358e56c167fc6ce31c50bc7a02dd5c17ee4338e8ac"},
+    {file = "Pillow-7.1.2-cp38-cp38-macosx_10_10_x86_64.whl", hash = "sha256:04766c4930c174b46fd72d450674612ab44cca977ebbcc2dde722c6933290107"},
+    {file = "Pillow-7.1.2-cp38-cp38-manylinux1_i686.whl", hash = "sha256:f455efb7a98557412dc6f8e463c1faf1f1911ec2432059fa3e582b6000fc90e2"},
+    {file = "Pillow-7.1.2-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:ee94fce8d003ac9fd206496f2707efe9eadcb278d94c271f129ab36aa7181344"},
+    {file = "Pillow-7.1.2-cp38-cp38-win32.whl", hash = "sha256:4b02b9c27fad2054932e89f39703646d0c543f21d3cc5b8e05434215121c28cd"},
+    {file = "Pillow-7.1.2-cp38-cp38-win_amd64.whl", hash = "sha256:3d25dd8d688f7318dca6d8cd4f962a360ee40346c15893ae3b95c061cdbc4079"},
+    {file = "Pillow-7.1.2-pp373-pypy36_pp73-win32.whl", hash = "sha256:0f01e63c34f0e1e2580cc0b24e86a5ccbbfa8830909a52ee17624c4193224cd9"},
+    {file = "Pillow-7.1.2-py3.8-macosx-10.9-x86_64.egg", hash = "sha256:70e3e0d99a0dcda66283a185f80697a9b08806963c6149c8e6c5f452b2aa59c0"},
+    {file = "Pillow-7.1.2.tar.gz", hash = "sha256:a0b49960110bc6ff5fead46013bcb8825d101026d466f3a4de3476defe0fb0dd"},
+]
+pyscreenshot = [
+    {file = "pyscreenshot-2.2-py2.py3-none-any.whl", hash = "sha256:1f1a7abaa126e7b15ac0c7343a63c0c426b0bfbef14785602a4fcda6e099bca7"},
+    {file = "pyscreenshot-2.2.tar.gz", hash = "sha256:dec8517cb18faf4f983dd2ee6636924e472a5644da1480ae871786dfcac244e9"},
+]
+python-xlib = [
+    {file = "python-xlib-0.27.tar.bz2", hash = "sha256:a90667c70905c6ef0754c8a09fa61acbc1e1b7ddb946d527831800d7cbfe9348"},
+    {file = "python_xlib-0.27-py2.py3-none-any.whl", hash = "sha256:b251d6679796af4ddabc02b170a5c38eda41f92a83d08fdcfeef5841c6467ac7"},
+]
+six = [
+    {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},
+    {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
+]
