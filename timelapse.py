@@ -14,6 +14,7 @@ def _parse_arguments():
     parser.add_argument("destination", type=str, action="store", help="destination directory for timelapse screenshots")
     parser.add_argument("windows", metavar='W', type=str, nargs='+', help="title of window that should be captured when active") # Consider nargs='*' to allow a default of capturing all processes.
     parser.add_argument("-i", "--interval", metavar='I', dest="interval", action="store", default=3, type=int, help="the period between screenshots, in seconds") # TODO: Determine best default
+    parser.add_argument("-s", "--create-subdirectories", dest="create_subdirectories", action="store_true", help="indicates that screenshots should be saved in numbered subdirectories in the destination directory")
     parser.add_argument("-d", "--debug", action="store_true", dest="debug", help="print debugging information")
     args = parser.parse_args()
     return args
@@ -31,6 +32,15 @@ def _determine_initial_index(destination):
     index_found = 0
     for f in p.iterdir():
         if f.is_file():
+            if int(f.stem) > index_found:
+                index_found = int(f.stem)
+    return index_found + 1
+
+def _determine_subdirectory_index(destination):
+    p = Path(destination)
+    index_found = 0
+    for f in p.iterdir():
+        if f.is_dir():
             if int(f.stem) > index_found:
                 index_found = int(f.stem)
     return index_found + 1
@@ -67,8 +77,14 @@ def _capture_screenshot(window, destination, index):
 
 def _capture_timelapse(args):
     disp = Xlib.display.Display()
-    screenshot_index = _determine_initial_index(args.destination)
-    dest_path = Path(args.destination)
+    destination = args.destination
+    if args.create_subdirectories:
+        capture_number = _determine_subdirectory_index(destination)
+        destination = Path(destination) / '{0:02}'.format(capture_number)
+        if not destination.exists():
+            destination.mkdir()
+    screenshot_index = _determine_initial_index(destination)
+    dest_path = Path(destination)
     initial_time = time.monotonic()
     while(True):
         if time.monotonic() - initial_time >= args.interval:
