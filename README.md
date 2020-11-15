@@ -27,3 +27,5 @@ timelapse.py ~/kevin/timelapses/webdev/01 Sublime Firefox Chromium
 ```
 
 The interval between screenshots, in seconds, can be specified using the `--interval` (`-i` for short) switch. The default is 3. It is not recommended to go much lower than this, as capturing and saving the screenshots is relatively intensive.
+
+If a timelapse is being captured in multiple sessions, the image sequence will be continued if the same destination directory is used each time. If capturing each session to a different directory is preferable, the `--create-subdirectories` (`-s` for short) switch can be used. Each session will then be captured to a numbered subdirectory of the specified destination.
