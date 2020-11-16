@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "timelapse"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Kevin Houlihan <kevin@crimsoncookie.com>"]
 license = "MIT"
