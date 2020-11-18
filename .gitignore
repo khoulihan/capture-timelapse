@@ -130,3 +130,6 @@ dmypy.json
 
 # Project specific
 README.md.backup
+captures/
+rejected/
+clips/
