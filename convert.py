@@ -34,11 +34,22 @@ def _prepare_clips(args):
     dest = Path(args.destination)
 
     last_sequence_directory = None
-    for child in sorted(source.glob('*')):
-        if child.is_dir():
-            if not child.samefile(dest):
-                last_sequence_directory = child
-                _prepare_clip(child, dest, args.framerate)
+    if not args.single:
+        for child in sorted(source.glob('*')):
+            if child.is_dir():
+                if not child.samefile(dest):
+                    last_sequence_directory = child
+                    _prepare_clip(child, dest, args.framerate)
+        if not last_sequence_directory:
+            print(
+                "No image sequences were found."
+                " Did you mean to use the --single switch?"
+            )
+            sys.exit(1)
+    else:
+        if not source.samefile(dest):
+            last_sequence_directory = source
+            _prepare_clip(source, dest, args.framerate)
 
     if last_sequence_directory and not args.skip_pad_clip:
         # Prepare a padding clip
@@ -49,10 +60,32 @@ def _prepare_clip(seq_directory, dest, framerate):
     target = dest.joinpath("{0}.mp4".format(seq_directory.name))
     if target.exists():
         target.unlink()
-    print("Preparing clip for {0} - destination {1}".format(seq_directory, target))
-    # The capture_output argument did not work here... Output is just being printed, and stderr will probably be empty in the event of an error??
+    print(
+        "Preparing clip for {0} - destination {1}".format(seq_directory, target)
+    )
+    # The capture_output argument did not work here... Output is just being
+    # printed, and stderr will probably be empty in the event of an error??
     status = subprocess.run(
-        ["ffmpeg", "-framerate", "{0:d}".format(framerate), "-pattern_type", "glob", "-i", "{0}/*.png".format(seq_directory), "-c:v", "libx264", "-profile:v", "high", "-crf", "20", "-pix_fmt", "yuv420p", "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2", target]
+        [
+            "ffmpeg",
+            "-framerate",
+            "{0:d}".format(framerate),
+            "-pattern_type",
+            "glob",
+            "-i",
+            "{0}/*.png".format(seq_directory),
+            "-c:v",
+            "libx264",
+            "-profile:v",
+            "high",
+            "-crf",
+            "20",
+            "-pix_fmt",
+            "yuv420p",
+            "-vf",
+            "pad=ceil(iw/2)*2:ceil(ih/2)*2",
+            target
+        ]
     )
     if status.returncode != 0:
         print (status.stderr)
@@ -67,10 +100,19 @@ def _prepare_padding_clip(seq_directory, dest):
 
     with tempfile.TemporaryDirectory() as temp_dir:
         for i in range(60):
-            copyfile(str(last_frame), str(Path(temp_dir).joinpath("{0:02d}.png".format(i))))
+            copyfile(
+                str(last_frame),
+                str(Path(temp_dir).joinpath("{0:02d}.png".format(i)))
+            )
 
-        print("Preparing pad clip from {0} - destination: {1}".format(seq_directory, target))
-        # The capture_output argument did not work here... Output is just being printed, and stderr will probably be empty in the event of an error??
+        print(
+            "Preparing pad clip from {0} - destination: {1}".format(
+                seq_directory,
+                target
+            )
+        )
+        # The capture_output argument did not work here... Output is just being
+        # printed, and stderr will probably be empty in the event of an error??
         status = subprocess.run(
             [
                 "ffmpeg",
@@ -94,7 +136,7 @@ def _prepare_padding_clip(seq_directory, dest):
             print (status.stderr)
 
 
-def compile(args):
+def convert(args):
     global _debug
     _debug = args.debug
 
@@ -113,10 +155,16 @@ def compile(args):
         print ("The specified destination is not a directory.")
         sys.exit(1)
     except FileNotFoundError:
-        print ("The specified destination directory could not be created because of missing parents.")
+        print (
+            "The specified destination directory could not be created because"
+            " of missing parents."
+        )
         sys.exit(1)
     except PermissionError:
-        print ("The destination directory could not be created due to inadequate permissions.")
+        print (
+            "The destination directory could not be created due to inadequate"
+            " permissions."
+        )
         sys.exit(1)
 
     try:

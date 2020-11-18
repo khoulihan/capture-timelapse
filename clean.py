@@ -60,17 +60,29 @@ def _check_rule(frame, rule):
 
 
 def _check_rules(frame, specification):
-    passed = all(map(lambda rule: _check_rule(frame, rule), specification['rules']))
+    passed = all(
+        map(
+            lambda rule: _check_rule(frame, rule),
+            specification['rules']
+        )
+    )
     if not passed:
         if _debug:
-            print('Frame broke rules for specification "%s"' % specification['name'])
+            print(
+                'Frame broke rules for specification "%s"' % specification['name']
+            )
     return passed
 
 
 def _process_frame(frame_path, destination, delete_immediately, specifications):
     passed = None
     with Image.open(frame_path) as frame:
-        passed = any(map(lambda spec: _check_rules(frame, spec), specifications))
+        passed = any(
+            map(
+                lambda spec: _check_rules(frame, spec),
+                specifications
+            )
+        )
     if not passed:
         if _debug:
             print('Bad frame detected (%s)' % frame_path)
@@ -94,14 +106,19 @@ def _process_ultimate_source(
     for frame in Path(source).iterdir():
         if frame.is_file():
             processed += 1
-            if not _process_frame(frame, destination, delete_immediately, specifications):
+            if not _process_frame(
+                frame,
+                destination,
+                delete_immediately,
+                specifications
+            ):
                 rejected.append(frame)
     return processed, rejected
 
 
 def _process_source(
     source,
-    check_children,
+    single,
     destination,
     delete_immediately,
     specifications
@@ -116,7 +133,7 @@ def _process_source(
         rejected,
         processed
     )
-    if check_children:
+    if not single:
         for child in Path(source).iterdir():
             if child.is_dir():
                 child_destination = Path(destination) / child.name
@@ -168,10 +185,16 @@ def clean(args):
         print ("The specified destination is not a directory.")
         sys.exit(1)
     except FileNotFoundError:
-        print ("The specified destination directory could not be created because of missing parents.")
+        print (
+            "The specified destination directory could not be created because"
+            " of missing parents."
+        )
         sys.exit(1)
     except PermissionError:
-        print ("The destination directory could not be created due to inadequate permissions.")
+        print (
+            "The destination directory could not be created due to"
+            " inadequate permissions."
+        )
         sys.exit(1)
 
     try:
@@ -190,7 +213,17 @@ def clean(args):
         for spec in parsed_specifications:
             print(spec)
 
-    processed, rejected = _process_source(args.source, args.check_children, args.destination, args.delete_immediately, parsed_specifications)
+    processed, rejected = _process_source(
+        args.source,
+        args.single,
+        args.destination,
+        args.delete_immediately,
+        parsed_specifications
+    )
+
+    if processed == 0:
+        print("No image sequences were found.")
+        sys.exit(1)
 
     print("%d frame(s) rejected of %d processed" % (len(rejected), processed))
     if _test:

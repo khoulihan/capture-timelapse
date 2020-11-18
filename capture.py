@@ -45,8 +45,14 @@ def _get_active_target_window(disp, windows):
         for w in windows:
             if w.lower() in str(focus.focus.get_wm_name()).lower():
                 return focus.focus
-            elif callable(getattr(focus.focus.query_tree()._data['parent'], 'get_wm_name', None)):
-                if w.lower() in str(focus.focus.query_tree()._data['parent'].get_wm_name()).lower():
+            elif callable(getattr(
+                focus.focus.query_tree()._data['parent'],
+                'get_wm_name',
+                None
+            )):
+                if w.lower() in str(
+                    focus.focus.query_tree()._data['parent'].get_wm_name()
+                ).lower():
                     return focus.focus.query_tree()._data['parent']
     return None
 
@@ -63,11 +69,19 @@ def _get_true_active_target_window(disp, windows):
 def _capture_screenshot(window, destination, index):
     capture_start = time.monotonic()
     geom = window.get_geometry()
-    # The parent geometry is the one that tells us the actual position on screen - the window geometry is the window interior relative to the parent.
+    # The parent geometry is the one that tells us the actual position on
+    # screen - the window geometry is the window interior relative to the parent.
     parent = window.query_tree()._data['parent']
     pgeom = parent.get_geometry()
 
-    im = ImageGrab.grab(bbox=(pgeom.x + geom.x, pgeom.y + geom.y, pgeom.x + geom.x + geom.width, pgeom.y + geom.y + geom.height))
+    im = ImageGrab.grab(
+        bbox=(
+            pgeom.x + geom.x,
+            pgeom.y + geom.y,
+            pgeom.x + geom.x + geom.width,
+            pgeom.y + geom.y + geom.height
+        )
+    )
     im.save(str(destination / '{0:06d}.png'.format(index)))
     return time.monotonic() - capture_start
 
@@ -75,7 +89,7 @@ def _capture_screenshot(window, destination, index):
 def _capture_timelapse(args):
     disp = Xlib.display.Display()
     destination = args.destination
-    if args.create_subdirectories:
+    if not args.single:
         capture_number = _determine_subdirectory_index(destination)
         destination = Path(destination) / '{0:02}'.format(capture_number)
         if not destination.exists():
@@ -88,12 +102,19 @@ def _capture_timelapse(args):
             initial_time = time.monotonic()
             window = _get_active_target_window(disp, args.windows)
             if window is not None:
-                elapsed = _capture_screenshot(window, dest_path, screenshot_index)
+                elapsed = _capture_screenshot(
+                    window,
+                    dest_path,
+                    screenshot_index
+                )
                 screenshot_index += 1
                 if args.debug:
                     print ("Screenshot time: {0}".format(elapsed))
                 if elapsed > args.interval:
-                    print ("Warning: Screenshot capture took longer than wait interval ({0})".format(elapsed))
+                    print (
+                        "Warning: Screenshot capture took longer than the"
+                        " wait interval ({0})".format(elapsed)
+                    )
         time.sleep(0.001)
 
 
@@ -107,10 +128,16 @@ def capture(args):
         print ("The specified destination is not a directory.")
         sys.exit(1)
     except FileNotFoundError:
-        print ("The specified destination directory could not be created because of missing parents.")
+        print (
+            "The specified destination directory could not be created because"
+            " of missing parents."
+        )
         sys.exit(1)
     except PermissionError:
-        print ("The destination directory could not be created due to inadequate permissions.")
+        print (
+            "The destination directory could not be created due to inadequate"
+            " permissions."
+        )
         sys.exit(1)
 
     try:
