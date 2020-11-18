@@ -40,22 +40,22 @@ timelapse capture --single ~/kevin/timelapses/webdev/01 Sublime Firefox Chromium
 
 ### Clean
 
-This command requires at least one specification file to define what a "good" frame is, and a target directory with the timelapse sequence to check.
+This command requires a source directory with the timelapse sequence to check, and at least one frame specification the check it against.
 
 ```
-timelapse clean specs/pyxel_edit.json ./timelapse
+timelapse clean ./timelapse specs/pyxel_edit.json
 ```
 
 If multiple applications were expected to be captured by the timelapse, multiple specification files can be listed. If a frame passes according to at least one of the specifications, it will not be rejected.
 
 ```
-timelapse clean specs/pyxel_edit.json specs/godot.json timelapse
+timelapse clean timelapse specs/pyxel_edit.json specs/godot.json
 ```
 
 Specification files can also be specified by name if they are included in the script's config directory (`~/.config/timelapse/framespecs` by default). The file extension is not required in this case.
 
 ```
-timelapse clean pyxel_edit timelapse
+timelapse clean timelapse pyxel_edit
 ```
 
 #### Destination
@@ -65,7 +65,7 @@ By default, any bad frames detected will be moved to a directory called "rejecte
 The specify a different destination, use the `--destination` flag.
 
 ```
-timelapse clean --destination ../rejected_frames pyxel_edit timelapse
+timelapse clean --destination ../rejected_frames timelapse pyxel_edit
 ```
 
 #### Delete Immediately
@@ -73,7 +73,7 @@ timelapse clean --destination ../rejected_frames pyxel_edit timelapse
 To delete frames immediately instead of moving them, add the `--delete` flag. This is not recommended unless you're sure your specification files work exactly as you want.
 
 ```
-timelapse clean --delete pyxel_edit timelapse
+timelapse clean --delete timelapse pyxel_edit
 ```
 
 #### Single
@@ -81,7 +81,7 @@ timelapse clean --delete pyxel_edit timelapse
 By default, the source is expected to be structured as several sequences in subdirectories. The rejected frames will be placed in subdirectories of the destination with the same names. To check a single sequence directly, use the `--single` (`-s` for short) switch. Rejected frames will be placed directly in the output directory.
 
 ```
-timelapse clean --single --destination ./rejected/01 pyxel_edit ./timelapse/01
+timelapse clean --single --destination ./rejected/01 ./timelapse/01 pyxel_edit
 ```
 
 #### Test
@@ -89,7 +89,7 @@ timelapse clean --single --destination ./rejected/01 pyxel_edit ./timelapse/01
 To only perform the checks, but not move or delete the detected bad frames, use the `--test` switch. A list of detected bad frames will be output to the terminal.
 
 ```
-timelapse clean --test specs/pyxel_edit.json timelapse
+timelapse clean --test timelapse specs/pyxel_edit.json
 ```
 
 ### Convert

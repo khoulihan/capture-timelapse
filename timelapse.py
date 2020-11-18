@@ -61,17 +61,17 @@ def _parse_arguments():
         help="detect and remove bad frames from the image sequence"
     )
     clean_parser.add_argument(
+        "source",
+        type=str,
+        action="store",
+        help="source directory for image sequences"
+    )
+    clean_parser.add_argument(
         "specification",
         type=str,
         action="store",
         nargs="+",
         help="specification of what to check for in the images"
-    )
-    clean_parser.add_argument(
-        "source",
-        type=str,
-        action="store",
-        help="source directory for image sequences"
     )
     clean_parser.add_argument(
         "--destination",
