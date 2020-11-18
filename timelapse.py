@@ -2,128 +2,51 @@
 
 import sys
 import argparse
-import Xlib.display
-import time
-from pathlib import Path
-import os
-from os import path
-import pyscreenshot as ImageGrab
+from capture import capture
+from clean import clean
+from compile import compile
 
 def _parse_arguments():
     parser = argparse.ArgumentParser(description="Capture a timelapse of some activity.")
-    parser.add_argument("destination", type=str, action="store", help="destination directory for timelapse screenshots")
-    parser.add_argument("windows", metavar='W', type=str, nargs='+', help="title of window that should be captured when active") # Consider nargs='*' to allow a default of capturing all processes.
-    parser.add_argument("-i", "--interval", metavar='I', dest="interval", action="store", default=3, type=int, help="the period between screenshots, in seconds") # TODO: Determine best default
-    parser.add_argument("-s", "--create-subdirectories", dest="create_subdirectories", action="store_true", help="indicates that screenshots should be saved in numbered subdirectories in the destination directory")
     parser.add_argument("-d", "--debug", action="store_true", dest="debug", help="print debugging information")
+    subparsers = parser.add_subparsers(dest='command')
+
+    # Capture command
+    capture_parser = subparsers.add_parser('capture', aliases=['cap'], help="capture a timelapse")
+    capture_parser.add_argument("destination", type=str, action="store", help="destination directory for timelapse screenshots")
+    capture_parser.add_argument("windows", metavar='W', type=str, nargs='+', help="title of window that should be captured when active") # Consider nargs='*' to allow a default of capturing all processes.
+    capture_parser.add_argument("-i", "--interval", metavar='I', dest="interval", action="store", default=3, type=int, help="the period between screenshots, in seconds") # TODO: Determine best default
+    capture_parser.add_argument("-s", "--create-subdirectories", dest="create_subdirectories", action="store_true", help="indicates that screenshots should be saved in numbered subdirectories in the destination directory")
+
+    clean_parser = subparsers.add_parser('clean', help="detect and remove bad frames from the image sequence")
+    clean_parser.add_argument("specification", type=str, action="store", nargs="+", help="specification of what to check for in the images")
+    clean_parser.add_argument("source", type=str, action="store", help="source directory for image sequences")
+    clean_parser.add_argument("--destination", dest="destination", metavar='D', type=str, action="store", default="rejected", help="destination directory for bad frames")
+    clean_parser.add_argument("--delete", action="store_true", dest="delete_immediately", help="delete detected frames immediately instead of moving them to a rejection directory")
+    clean_parser.add_argument("--check-children", action="store_true", dest="check_children", help="check child directories for frames instead of just the specified source directory")
+    clean_parser.add_argument("--test", action="store_true", dest="test", help="check the rules but do not move or delete the frames")
+
+    compile_parser = subparsers.add_parser('compile', aliases=['comp'], help="prepare video clips")
+    compile_parser.add_argument("source", type=str, action="store", help="source directory for image sequences")
+    compile_parser.add_argument("--destination", dest="destination", metavar='D', type=str, action="store", default="clips", help="destination directory for raw clips")
+    compile_parser.add_argument("-f", "--framerate", metavar='F', dest="framerate", action="store", default=20, type=int, help="the framerate to use for the video clips") # TODO: Determine best default
+    compile_parser.add_argument("-s", "--skip-pad-clip", action="store_true", dest="skip_pad_clip", help="skip creation of a padding clip based  on the final frame")
+
     args = parser.parse_args()
     return args
-
-def _verify_destination(destination):
-    p = Path(destination)
-    if not p.exists():
-        p.mkdir()
-    else:
-        if p.is_file():
-            raise NotADirectoryError()
-
-def _determine_initial_index(destination):
-    p = Path(destination)
-    index_found = 0
-    for f in p.iterdir():
-        if f.is_file():
-            if int(f.stem) > index_found:
-                index_found = int(f.stem)
-    return index_found + 1
-
-def _determine_subdirectory_index(destination):
-    p = Path(destination)
-    index_found = 0
-    for f in p.iterdir():
-        if f.is_dir():
-            if int(f.stem) > index_found:
-                index_found = int(f.stem)
-    return index_found + 1
-
-def _get_active_target_window(disp, windows):
-    focus = disp.get_input_focus()
-    if focus.focus != 0 and focus.focus != 1:
-        for w in windows:
-            if w.lower() in str(focus.focus.get_wm_name()).lower():
-                return focus.focus
-            elif callable(getattr(focus.focus.query_tree()._data['parent'], 'get_wm_name', None)):
-                if w.lower() in str(focus.focus.query_tree()._data['parent'].get_wm_name()).lower():
-                    return focus.focus.query_tree()._data['parent']
-    return None
-
-def _get_true_active_target_window(disp, windows):
-    focus = disp.get_input_focus()
-    if focus.focus != 0 and focus.focus != 1:
-        for w in windows:
-            if w.lower() in str(focus.focus.get_wm_name()).lower():
-                return focus.focus
-    return None
-
-def _capture_screenshot(window, destination, index):
-    capture_start = time.monotonic()
-    geom = window.get_geometry()
-    # The parent geometry is the one that tells us the actual position on screen - the window geometry is the window interior relative to the parent.
-    parent = window.query_tree()._data['parent']
-    pgeom = parent.get_geometry()
-
-    im = ImageGrab.grab(bbox=(pgeom.x + geom.x, pgeom.y + geom.y, pgeom.x + geom.x + geom.width, pgeom.y + geom.y + geom.height))
-    im.save(str(destination / '{0:06d}.png'.format(index)))
-    return time.monotonic() - capture_start
-
-def _capture_timelapse(args):
-    disp = Xlib.display.Display()
-    destination = args.destination
-    if args.create_subdirectories:
-        capture_number = _determine_subdirectory_index(destination)
-        destination = Path(destination) / '{0:02}'.format(capture_number)
-        if not destination.exists():
-            destination.mkdir()
-    screenshot_index = _determine_initial_index(destination)
-    dest_path = Path(destination)
-    initial_time = time.monotonic()
-    while(True):
-        if time.monotonic() - initial_time >= args.interval:
-            initial_time = time.monotonic()
-            window = _get_active_target_window(disp, args.windows)
-            if window is not None:
-                elapsed = _capture_screenshot(window, dest_path, screenshot_index)
-                screenshot_index += 1
-                if args.debug:
-                    print ("Screenshot time: {0}".format(elapsed))
-                if elapsed > args.interval:
-                    print ("Warning: Screenshot capture took longer than wait interval ({0})".format(elapsed))
-        time.sleep(0.001)
 
 
 def _main():
     args = _parse_arguments()
+    global _debug
+    _debug = args.debug
     try:
-        try:
-            _verify_destination(args.destination)
-        except NotADirectoryError:
-            print ("The specified destination is not a directory.")
-            sys.exit(1)
-        except FileNotFoundError:
-            print ("The specified destination directory could not be created because of missing parents.")
-            sys.exit(1)
-        except PermissionError:
-            print ("The destination directory could not be created due to inadequate permissions.")
-            sys.exit(1)
-
-        try:
-            _capture_timelapse(args)
-        except IOError as error:
-            print (error)
-            print ("An IO error occurred while saving a screenshot to a file.")
-            sys.exit(1)
-        except PermissionError:
-            print ("A screenshot could not be saved due to inadequate permissions")
-            sys.exit(1)
+        if args.command in ['capture', 'cap']:
+            capture(args)
+        elif args.command in ['clean']:
+            clean(args)
+        elif args.command in ['compile', 'comp']:
+            compile(args)
     except KeyboardInterrupt:
         # TODO: Maybe track some statistics and print them on exit.
         print()
