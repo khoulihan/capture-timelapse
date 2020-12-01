@@ -1,9 +1,15 @@
 [tool.poetry]
 name = "timelapse"
-version = "0.2.0"
+version = "0.2.1"
 description = ""
 authors = ["Kevin Houlihan <kevin@crimsoncookie.com>"]
 license = "MIT"
+packages = [
+    { include = "capture.py" },
+    { include = "clean.py" },
+    { include = "convert.py" },
+    { include = "timelapse.py" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
