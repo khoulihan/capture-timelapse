@@ -3,6 +3,7 @@ import Xlib.display
 import time
 from pathlib import Path
 import os
+import math
 #from os import path
 import pyscreenshot as ImageGrab
 
@@ -86,7 +87,27 @@ def _capture_screenshot(window, destination, index):
     return time.monotonic() - capture_start
 
 
+_feedback_frames = [' ', '◔', '◑', '◕', '●', '◉']
+
+
+def _display_feedback(t, interval, is_capture=False):
+    sys.stdout.write("\b" * (interval + 10))
+    if is_capture:
+        sys.stdout.write(_feedback_frames[-1])
+    else:
+        sys.stdout.write(
+            _feedback_frames[
+                int(
+                    math.floor(((len(_feedback_frames) - 1) / interval) * t)
+                )
+            ]
+        )
+    sys.stdout.flush()
+
+
 def _capture_timelapse(args):
+    sys.stdout.write("\x1b[?25l")
+    sys.stdout.flush()
     disp = Xlib.display.Display()
     destination = args.destination
     if not args.single:
@@ -99,6 +120,11 @@ def _capture_timelapse(args):
     initial_time = time.monotonic()
     while(True):
         if time.monotonic() - initial_time >= args.interval:
+            _display_feedback(
+                time.monotonic() - initial_time,
+                args.interval,
+                True
+            )
             initial_time = time.monotonic()
             window = _get_active_target_window(disp, args.windows)
             if window is not None:
@@ -115,6 +141,11 @@ def _capture_timelapse(args):
                         "Warning: Screenshot capture took longer than the"
                         " wait interval ({0})".format(elapsed)
                     )
+        else:
+            _display_feedback(
+                time.monotonic() - initial_time,
+                args.interval
+            )
         time.sleep(0.001)
 
 

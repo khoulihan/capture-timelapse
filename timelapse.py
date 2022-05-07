@@ -167,6 +167,9 @@ def _main():
             convert(args)
     except KeyboardInterrupt:
         # TODO: Maybe track some statistics and print them on exit.
+        # Redisplay the cursor
+        sys.stdout.write("\x1b[?25h")
+        sys.stdout.flush()
         print()
         sys.exit(0)
 
