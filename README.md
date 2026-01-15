@@ -6,6 +6,8 @@ Copyright (c) 2020 by Kevin Houlihan
 
 License: MIT, see LICENSE for more details.
 
+**This repository has been [migrated to Codeberg](https://codeberg.org/hyh/capture-timelapse).**
+
 ## Prerequisites
 
 Depends on Python 3.7 (though possibly earlier versions of Python 3 will work fine), the [python-xlib](https://github.com/python-xlib/python-xlib), [pyscreenshot](https://github.com/ponty/pyscreenshot), and [Pillow](https://python-pillow.org/) libraries. The ffmpeg command line utility must be installed and available in the path. Only Unix systems with the X.org windowing system are supported at this time.
